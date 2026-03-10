@@ -395,7 +395,7 @@
 
   <div class="diagram-wrap fade-in">
     <h3>一次 AI 任务的基本流程</h3>
-    <svg viewBox="0 0 340 340" class="diagram-svg" style="max-width:380px;" id="panoramaSvg" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 340 350" class="diagram-svg" style="max-width:400px;" id="panoramaSvg" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="arrMain" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d4726a"/></marker>
         <marker id="arrGray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a09080"/></marker>
@@ -403,50 +403,47 @@
 
       <!-- Input -->
       <g class="node-clickable" data-info="input">
-        <rect x="95" y="10" width="150" height="44" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
-        <text x="170" y="30" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="14">Input</text>
-        <text x="170" y="46" text-anchor="middle" fill="#7a6858" font-size="10">用户输入</text>
+        <rect x="85" y="10" width="170" height="50" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="33" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="17">💬 Input</text>
+        <text x="170" y="52" text-anchor="middle" fill="#7a6858" font-size="13">用户输入</text>
       </g>
 
-      <line x1="170" y1="56" x2="170" y2="86" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
+      <line x1="170" y1="62" x2="170" y2="96" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
 
       <!-- Agent container -->
       <g class="node-clickable" data-info="agent_overview">
-        <rect x="20" y="90" width="300" height="140" rx="14" fill="#d4726a" opacity="0.06" stroke="#d4726a" stroke-width="2"/>
-        <text x="170" y="112" text-anchor="middle" fill="#d4726a" font-weight="800" font-size="14">Agent 智能体</text>
+        <rect x="20" y="100" width="300" height="130" rx="14" fill="#d4726a" opacity="0.06" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="124" text-anchor="middle" fill="#d4726a" font-weight="800" font-size="17">🤖 Agent 智能体</text>
+        <text x="170" y="143" text-anchor="middle" fill="#a09080" font-size="11">OpenClaw · Claude Code · Manus …</text>
       </g>
 
-      <!-- LLM inside Agent -->
+      <!-- LLM inside Agent (centered left) -->
       <g class="node-clickable" data-info="model_overview">
-        <rect x="38" y="124" width="130" height="46" rx="8" fill="#7a6858"/>
-        <text x="103" y="144" text-anchor="middle" fill="#fff" font-weight="700" font-size="12">LLM 大脑</text>
-        <text x="103" y="160" text-anchor="middle" fill="#d4ccc2" font-size="9">GPT / Claude / DeepSeek</text>
+        <rect x="30" y="158" width="148" height="50" rx="8" fill="#7a6858"/>
+        <text x="104" y="180" text-anchor="middle" fill="#fff" font-weight="700" font-size="15">🧠 LLM 大脑</text>
+        <text x="104" y="198" text-anchor="middle" fill="#d4ccc2" font-size="11">GPT / Claude / DeepSeek</text>
       </g>
 
-      <!-- Tools inside Agent -->
+      <!-- Tools inside Agent (centered right) -->
       <g class="node-clickable" data-info="tools_overview">
-        <rect x="184" y="124" width="120" height="46" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
-        <text x="244" y="143" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="12">工具</text>
-        <text x="244" y="160" text-anchor="middle" fill="#7a6858" font-size="9">Skills / MCP</text>
+        <rect x="192" y="158" width="118" height="50" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+        <text x="251" y="180" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="15">🔧 工具</text>
+        <text x="251" y="198" text-anchor="middle" fill="#7a6858" font-size="11">Skills / MCP</text>
       </g>
 
       <!-- LLM <-> Tools -->
-      <line x1="170" y1="147" x2="182" y2="147" stroke="#a09080" stroke-width="1.5" marker-end="url(#arrGray)"/>
-
-      <!-- Sub labels -->
-      <text x="170" y="200" text-anchor="middle" fill="#a09080" font-size="9">OpenClaw · Claude Code · Manus …</text>
+      <line x1="180" y1="183" x2="190" y2="183" stroke="#a09080" stroke-width="1.5" marker-end="url(#arrGray)"/>
 
       <!-- Arrow Agent -> Output -->
-      <line x1="170" y1="232" x2="170" y2="262" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
+      <line x1="170" y1="232" x2="170" y2="266" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
 
       <!-- Output -->
       <g class="node-clickable" data-info="output">
-        <rect x="95" y="266" width="150" height="44" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
-        <text x="170" y="286" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="14">Output</text>
-        <text x="170" y="302" text-anchor="middle" fill="#7a6858" font-size="10">执行结果</text>
+        <rect x="85" y="270" width="170" height="50" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="293" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="17">📋 Output</text>
+        <text x="170" y="312" text-anchor="middle" fill="#7a6858" font-size="13">执行结果</text>
       </g>
 
-      <text x="170" y="332" text-anchor="middle" fill="#a09080" font-size="10">点击每个方框查看详细说明</text>
     </svg>
     <p class="diagram-note">* 这是一个高度简化的示意图，点击每个节点可以查看该环节的详细解释和更多关联概念。</p>
   </div>

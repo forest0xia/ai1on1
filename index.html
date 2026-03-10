@@ -385,7 +385,7 @@
   <h1>轻松看懂AI</h1>
   <p class="subtitle">用最简单的方式，快速了解 AI 世界里那些听起来很酷的词——它们到底是什么，又是什么关系。</p>
 
-  <a href="#panorama" class="hero-btn">开始探险</a>
+  <a href="#panorama" class="hero-btn">开始学习</a>
 </header>
 
 <!-- ==================== SECTION 1: PANORAMA ==================== -->
@@ -473,8 +473,7 @@
       <p>Token 是 LLM 读写文字的最小单位。一个中文字约 1-2 个 token，一个英文单词约 1-3 个 token。LLM 不直接看"字"，而是把文字切成 token 来处理。</p>
       <div class="analogy">生活比喻：拼乐高——一整句话被拆成一块块积木（token），AI 一块一块地读，再一块一块地拼出回答。</div>
       <div style="margin-top:16px; padding-top:16px; border-top:1px solid #ede6dd;">
-        <div style="font-weight:700;font-size:.92rem;margin-bottom:10px;">看看 AI 是怎么"切"文字的</div>
-        <div class="token-sentence">中文：「一起来了解人工智能吧」</div>
+        <div style="font-weight:700;font-size:.92rem;margin-bottom:10px;">AI 怎么"切"文字</div>
         <div class="tokens-row">
           <span class="tk tk-1">一起</span>
           <span class="tk tk-2">来</span>
@@ -483,22 +482,15 @@
           <span class="tk tk-5">智能</span>
           <span class="tk tk-1">吧</span>
         </div>
-        <div class="token-note">每个色块 = 1 个 Token，这句话共 6 个 Token</div>
-        <div class="token-sentence" style="margin-top:12px;">英文：「What is artificial intelligence?」</div>
-        <div class="tokens-row">
+        <div class="token-note">「一起来了解人工智能吧」→ 6 个 Token</div>
+        <div class="tokens-row" style="margin-top:10px;">
           <span class="tk tk-3">What</span>
           <span class="tk tk-4">_is</span>
           <span class="tk tk-5">_artificial</span>
           <span class="tk tk-1">_intelligence</span>
           <span class="tk tk-2">?</span>
         </div>
-        <div class="token-note">英文 5 个 Token — 常见单词通常独占一个 Token</div>
-        <div style="margin-top:12px; padding:10px 14px; background:#faf6f1; border-radius:8px; font-size:.82rem; color:#5a4a3c; line-height:1.7;">
-          <strong>Token 为什么重要？</strong><br>
-          · 计费单位 — API 按 Token 数量收费（输入 + 输出）<br>
-          · 容量限制 — 每次能放多少内容进去，由 Context 窗口大小决定<br>
-          · 速度感知 — AI 回复速度就是每秒生成的 Token 数
-        </div>
+        <div class="token-note">「What is artificial intelligence?」→ 5 个 Token</div>
       </div>
       <a class="deep-link" href="https://platform.openai.com/tokenizer" target="_blank">在线 Token 计数器 →</a>
     </div>
@@ -511,33 +503,31 @@
       <div class="analogy">每次问大模型问题，就相当于把你的问题、之前的聊天记录、系统提示词、网络搜集的关键内容等全都打包丢给 AI 去处理，然后 AI 根据内容返回答案。</div>
       <div class="ctx-demo" style="margin-top:16px;">
         <div class="ctx-demo-header">
-          <span>Context Window 里面装了什么</span>
+          <span>Context Window 示意</span>
         </div>
         <div class="ctx-demo-body">
           <div class="ctx-block ctx-sys">
-            <span class="ctx-label">System Prompt（系统指令）</span>
-            「你是一个友好的 AI 助手，回答要通俗易懂…」
+            <span class="ctx-label">系统指令</span>
+            「你是一个友好的 AI 助手…」
             <div class="ctx-bar"><div class="ctx-fill" style="width:6%;background:#d4a017"></div></div>
           </div>
           <div class="ctx-block ctx-hist">
-            <span class="ctx-label">历史对话记录</span>
-            用户: 什么是人工智能？<br>
-            AI: 人工智能就是让机器学会像人一样思考…<br>
-            用户: 那 ChatGPT 属于哪种？
+            <span class="ctx-label">历史对话</span>
+            用户: 什么是 AI？ → AI: 让机器像人一样思考…
             <div class="ctx-bar"><div class="ctx-fill" style="width:30%;background:#d4726a"></div></div>
           </div>
           <div class="ctx-block ctx-rag">
-            <span class="ctx-label">RAG 检索到的资料（如果有）</span>
-            「（来自知识库）ChatGPT 是 OpenAI 开发的对话式 AI，基于 GPT 架构…」
+            <span class="ctx-label">RAG 检索资料</span>
+            「ChatGPT 基于 GPT 架构…」
             <div class="ctx-bar"><div class="ctx-fill" style="width:20%;background:#16a34a"></div></div>
           </div>
           <div class="ctx-block ctx-user">
-            <span class="ctx-label">当前用户输入</span>
+            <span class="ctx-label">当前输入</span>
             「它和 Claude 有什么区别？」
             <div class="ctx-bar"><div class="ctx-fill" style="width:3%;background:#9333ea"></div></div>
           </div>
         </div>
-        <div class="ctx-footer">已使用 ≈ 4,800 / 128,000 tokens（色条仅示意比例）</div>
+        <div class="ctx-footer">≈ 4,800 / 128,000 tokens</div>
       </div>
       <a class="deep-link" href="https://docs.anthropic.com/en/docs/about-claude/models" target="_blank">各模型上下文大小对比 →</a>
     </div>

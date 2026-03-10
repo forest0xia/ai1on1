@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>轻松看懂 AI — 零基础图解指南</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #fdf8f4; color: #3d2c22; line-height: 1.8; overflow-x: hidden;
+  }
+
+  /* NAV */
+  .top-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e6ddd4;
+    display: flex; align-items: center; padding: 0 24px; height: 56px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .top-nav::-webkit-scrollbar { display: none; }
+  .nav-logo { font-size: 1.1rem; font-weight: 800; margin-right: 28px; white-space: nowrap; color: #d4726a; }
+  .nav-links { display: flex; gap: 2px; }
+  .nav-links a {
+    text-decoration: none; color: #7a6858; font-size: .82rem; font-weight: 500;
+    padding: 6px 13px; border-radius: 6px; white-space: nowrap; transition: all .2s;
+  }
+  .nav-links a:hover, .nav-links a.active { background: #d4726a; color: #fff; }
+
+  .progress-bar {
+    position: fixed; top: 56px; left: 0; height: 2px; z-index: 999;
+    background: #d4726a; width: 0%; transition: width .1s;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 80vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 100px 24px 60px;
+    background: linear-gradient(160deg, #b85c52 0%, #d4726a 50%, #e8956e 100%);
+    color: #fff; position: relative;
+  }
+  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin-bottom: 14px; letter-spacing: -0.5px; }
+  .hero .subtitle { font-size: clamp(.95rem, 2.5vw, 1.2rem); opacity: 0.85; max-width: 600px; margin-bottom: 36px; }
+  .hero-btn {
+    display: inline-block; padding: 14px 44px; border-radius: 8px;
+    background: #fff; color: #d4726a; font-size: 1rem; font-weight: 700;
+    text-decoration: none; transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+  /* WORD CLOUD */
+  .word-cloud {
+    position: relative; width: 100%; max-width: 620px;
+    height: 180px; margin: 20px auto 50px;
+  }
+  .word-cloud span {
+    position: absolute; color: rgba(255,255,255,0.6);
+    font-weight: 700; white-space: nowrap;
+    animation: wcFloat 6s ease-in-out infinite alternate;
+    user-select: none; pointer-events: none;
+  }
+  .word-cloud span.wc-lg { font-size: clamp(1.3rem, 3vw, 1.8rem); color: rgba(255,255,255,0.85); }
+  .word-cloud span.wc-md { font-size: clamp(0.95rem, 2.2vw, 1.25rem); color: rgba(255,255,255,0.65); }
+  .word-cloud span.wc-sm { font-size: clamp(0.7rem, 1.5vw, 0.9rem); color: rgba(255,255,255,0.45); }
+  @keyframes wcFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+  }
+
+  /* SECTIONS */
+  section { padding: 72px 24px; max-width: 960px; margin: 0 auto; }
+  section h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: 8px; color: #3d2c22; }
+  section .section-sub { color: #7a6858; font-size: .95rem; margin-bottom: 32px; }
+
+  /* CARDS */
+  .card {
+    background: #fff; border-radius: 12px; padding: 24px; position: relative;
+    border: 1px solid #ede6dd; cursor: default;
+  }
+  .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+  .card .en-name { font-size: .8rem; color: #a09080; margin-bottom: 10px; }
+  .card p { color: #5a4a3c; font-size: .92rem; }
+  .card .analogy {
+    margin-top: 14px; padding: 12px 16px; border-radius: 8px;
+    background: #faf6f1; border-left: 3px solid #d4726a; font-size: .88rem; color: #5a4a3c;
+  }
+  .card .deep-link {
+    display: inline-block; margin-top: 12px; color: #d4726a; font-size: .82rem;
+    font-weight: 600; text-decoration: none;
+  }
+  .card .deep-link:hover { text-decoration: underline; }
+
+  .card-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block; font-size: .7rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 4px; color: #fff; margin-bottom: 10px;
+  }
+  .badge-basic { background: #d4726a; }
+  .badge-mid { background: #7a6858; }
+
+  /* ACCORDION */
+  .accordion { max-width: 860px; margin: 0 auto; }
+  .acc-item { background: #fff; border-radius: 10px; margin-bottom: 8px; border: 1px solid #ede6dd; overflow: hidden; }
+  .acc-header {
+    padding: 16px 22px; font-weight: 600; font-size: .95rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background .2s; user-select: none;
+  }
+  .acc-header:hover { background: #faf6f1; }
+  .acc-header .arrow { transition: transform .3s; font-size: 1rem; color: #a09080; }
+  .acc-item.open .acc-header .arrow { transform: rotate(180deg); }
+  .acc-body { display: none; }
+  .acc-item.open .acc-body { display: block; }
+  .acc-body-inner { padding: 0 22px 20px; color: #5a4a3c; font-size: .9rem; }
+
+  /* DIAGRAM */
+  .diagram-wrap {
+    background: #fff; border-radius: 14px; padding: 32px 20px;
+    border: 1px solid #ede6dd; overflow-x: auto;
+  }
+  .diagram-wrap h3 { text-align: center; font-size: 1.1rem; margin-bottom: 20px; font-weight: 700; }
+  .diagram-svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+  /* TABLE */
+  .cmp-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; border: 1px solid #ede6dd; }
+  .cmp-table th { background: #d4726a; color: #fff; padding: 12px 16px; font-size: .85rem; text-align: left; }
+  .cmp-table td { padding: 12px 16px; font-size: .85rem; background: #fff; border-bottom: 1px solid #f0ebe4; }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table tr:hover td { background: #faf6f1; }
+
+
+  /* TIMELINE */
+  .timeline { position: relative; padding: 20px 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 2px; background: #d4ccc2; transform: translateX(-50%);
+  }
+  .tl-item { display: flex; align-items: flex-start; margin-bottom: 36px; position: relative; }
+  .tl-item:nth-child(odd) { flex-direction: row-reverse; }
+  .tl-content {
+    width: 44%; background: #fff; border-radius: 10px; padding: 20px;
+    border: 1px solid #ede6dd;
+  }
+  .tl-dot {
+    position: absolute; left: 50%; top: 20px; width: 14px; height: 14px;
+    background: #d4726a; border: 3px solid #fff; border-radius: 50%;
+    transform: translateX(-50%); box-shadow: 0 0 0 3px #d4ccc2; z-index: 2;
+  }
+  .tl-year { font-weight: 800; font-size: 1rem; color: #d4726a; margin-bottom: 4px; }
+
+  /* QUIZ */
+  .quiz-area { max-width: 700px; margin: 0 auto; }
+  .quiz-q { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 16px; border: 1px solid #ede6dd; }
+  .quiz-q h4 { font-size: .98rem; margin-bottom: 14px; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 18px; border: 1px solid #e6ddd4; border-radius: 8px;
+    cursor: pointer; font-size: .9rem;
+  }
+  .quiz-opt:hover { border-color: #d4726a; background: #fff5f0; }
+  .quiz-opt.correct { border-color: #16a34a; background: #f0fdf4; }
+  .quiz-opt.wrong   { border-color: #dc2626; background: #fef2f2; }
+  .quiz-result { margin-top: 10px; font-weight: 600; font-size: .9rem; min-height: 20px; }
+
+  /* RESOURCES */
+  .res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  @media (max-width: 600px) { .res-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+  .res-card {
+    background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #ede6dd;
+  }
+  .res-card h4 { font-size: .92rem; margin-bottom: 6px; }
+  .res-card p { font-size: .82rem; color: #7a6858; margin-bottom: 10px; }
+  .res-card a { color: #d4726a; font-weight: 600; font-size: .82rem; text-decoration: none; }
+  .res-card a:hover { text-decoration: underline; }
+  @media (max-width: 480px) {
+    .res-card { padding: 14px; }
+    .res-card h4 { font-size: .85rem; }
+    .res-card p { font-size: .78rem; margin-bottom: 6px; }
+    .res-card a { font-size: .78rem; }
+  }
+
+  /* POPUP & OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1999; }
+  .overlay.show { display: block; }
+  .info-popup {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: #fff; border-radius: 16px; padding: 0; max-width: 480px; width: 92%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18); z-index: 2000;
+    animation: popIn .25s ease; max-height: 80vh; overflow-y: auto;
+  }
+  .info-popup.show { display: block; }
+  @keyframes popIn { from { transform: translate(-50%,-50%) scale(0.92); opacity: 0; } to { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
+  .popup-close { position: absolute; top: 12px; right: 16px; font-size: 1.3rem; cursor: pointer; color: rgba(255,255,255,0.7); background: none; border: none; z-index: 1; }
+  .popup-close:hover { color: #fff; }
+  .pop-header { background: linear-gradient(135deg, #b85c52, #d4726a); padding: 22px 24px 18px; border-radius: 16px 16px 0 0; }
+  .pop-header h3 { color: #fff; font-size: 1.1rem; font-weight: 800; margin: 0; }
+  .pop-header .pop-tagline { color: rgba(255,255,255,0.8); font-size: .82rem; margin-top: 4px; }
+  .pop-body { padding: 20px 24px 24px; }
+  .pop-body p { font-size: .9rem; color: #5a4a3c; line-height: 1.8; margin-bottom: 10px; }
+  .pop-block {
+    background: #faf6f1; border-radius: 10px; padding: 14px 16px;
+    margin: 12px 0; border-left: 3px solid #d4726a;
+  }
+  .pop-block .pop-block-title { font-weight: 700; font-size: .85rem; color: #d4726a; margin-bottom: 6px; }
+  .pop-block ul { padding-left: 16px; margin: 0; font-size: .85rem; color: #5a4a3c; line-height: 2; }
+  .pop-chip {
+    display: inline-block; background: #d4726a; color: #fff; font-size: .72rem;
+    padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-right: 4px; vertical-align: middle;
+  }
+  .pop-link {
+    display: inline-block; margin-top: 14px; padding: 8px 18px; border-radius: 8px;
+    background: #faf6f1; color: #d4726a; font-size: .85rem; font-weight: 600;
+    text-decoration: none; border: 1px solid #ede6dd;
+  }
+  .pop-link:hover { background: #d4726a; color: #fff; }
+
+  /* CAKE */
+  .cake-tier {
+    margin: 0 auto; border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer; margin-bottom: 6px;
+  }
+  .tier-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px; color: #fff;
+  }
+  .tier-header h4 { font-size: .95rem; font-weight: 700; }
+  .tier-header .tier-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: .95rem; margin-right: 10px; flex-shrink: 0;
+  }
+  .tier-header .tier-label { display: flex; align-items: center; }
+  .tier-toggle { font-size: 1.1rem; }
+  .cake-tier.open .tier-toggle { transform: rotate(180deg); }
+  .tier-body { display: none; }
+  .cake-tier.open .tier-body { display: block; }
+  .tier-body-inner { padding: 0 22px 22px; color: rgba(255,255,255,0.92); font-size: .88rem; }
+  .tier-body-inner strong { color: #fff; }
+  .tier-analogy {
+    margin-top: 12px; padding: 12px 16px; border-radius: 8px;
+    background: rgba(255,255,255,0.12); font-size: .85rem; line-height: 1.7;
+  }
+  .tier-concepts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .concept-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.18);
+    color: #fff; font-size: .78rem; font-weight: 600;
+  }
+  .tier-examples {
+    margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px;
+  }
+  .tier-example-card {
+    padding: 10px 14px; border-radius: 8px; background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.12); font-size: .82rem;
+  }
+  .tier-example-card strong { display: block; margin-bottom: 3px; }
+  .cake-connector { text-align: center; padding: 1px 0; color: #c4b8aa; font-size: .9rem; }
+
+  /* SVG clickable nodes */
+  .node-clickable { cursor: pointer; }
+  .node-clickable:hover { filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
+
+  /* Company grid */
+  .co-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 768px) { .co-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) {
+    .co-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .co-card { padding: 10px 12px; }
+    .co-name { font-size: .82rem; }
+    .co-sub { font-size: .72rem; }
+    .c-tag { font-size: .65rem; padding: 1px 6px; }
+  }
+  .co-card {
+    background: #fff; border: 1px solid #ede6dd; border-radius: 10px;
+    padding: 14px 16px; cursor: pointer; transition: box-shadow .15s;
+  }
+  .co-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .co-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .co-name { font-weight: 700; font-size: .9rem; }
+  .co-sub { font-size: .78rem; color: #7a6858; margin-top: 3px; }
+  .co-detail { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0ebe4; font-size: .82rem; color: #5a4a3c; line-height: 1.7; }
+  .co-card.open .co-detail { display: block; }
+  .c-tag {
+    font-size: .7rem; padding: 2px 8px; border-radius: 4px;
+    background: #f0ebe4; color: #7a6858; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+  }
+  .c-tag.open-source { background: #ecfdf5; color: #16a34a; }
+
+  /* TOKEN VIZ */
+  .token-demo { background: #fff; border: 1px solid #ede6dd; border-radius: 12px; padding: 20px; }
+  .token-demo h4 { font-size: .92rem; font-weight: 700; margin-bottom: 12px; }
+  .token-sentence { font-size: .95rem; color: #7a6858; margin-bottom: 10px; font-family: monospace; }
+  .tokens-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tk { padding: 5px 10px; border-radius: 5px; font-size: .82rem; font-weight: 600; font-family: monospace; }
+  .tk-1 { background: #ffd6cc; color: #8b1a00; border: 1px solid #ffb0a0; }
+  .tk-2 { background: #cce0ff; color: #003a8b; border: 1px solid #99c2ff; }
+  .tk-3 { background: #ccf5e0; color: #005a25; border: 1px solid #99eac4; }
+  .tk-4 { background: #f0d6ff; color: #500080; border: 1px solid #d9a3ff; }
+  .tk-5 { background: #fff3cc; color: #7a5500; border: 1px solid #ffd966; }
+  .token-note { font-size: .78rem; color: #a09080; }
+
+  /* CONTEXT VIZ */
+  .ctx-demo { border: 2px solid #d4726a; border-radius: 12px; overflow: hidden; }
+  .ctx-demo-header { background: #d4726a; color: #fff; padding: 10px 16px; font-size: .82rem; font-weight: 600; display: flex; justify-content: space-between; }
+  .ctx-demo-body { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .ctx-block { border-radius: 6px; padding: 10px 12px; font-size: .82rem; line-height: 1.6; }
+  .ctx-block .ctx-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; opacity: .65; display: block; margin-bottom: 2px; }
+  .ctx-block.ctx-sys { background: #fff8e8; border-left: 3px solid #d4a017; }
+  .ctx-block.ctx-hist { background: #e8f0ff; border-left: 3px solid #d4726a; }
+  .ctx-block.ctx-rag { background: #e8fff2; border-left: 3px solid #16a34a; }
+  .ctx-block.ctx-user { background: #fce8ff; border-left: 3px solid #9333ea; }
+  .ctx-bar { height: 5px; border-radius: 3px; background: #ede6dd; margin-top: 6px; overflow: hidden; }
+  .ctx-fill { height: 100%; border-radius: 3px; }
+  .ctx-footer { font-size: .72rem; color: #a09080; text-align: right; padding: 6px 12px; }
+
+  /* SUMMARY TABLE */
+  .sum-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  .sum-table th { background: #d4726a; color: #fff; padding: 10px 14px; text-align: left; font-size: .78rem; font-weight: 600; }
+  .sum-table td { padding: 10px 14px; border-bottom: 1px solid #ede6dd; vertical-align: top; }
+  .sum-table tr:hover td { background: #faf6f1; }
+  .sum-kw { font-size: .8rem; font-weight: 700; background: #d4726a; color: #fff; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  @media (max-width: 480px) {
+    .sum-table { font-size: .78rem; }
+    .sum-table th, .sum-table td { padding: 8px 10px; }
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px 24px; font-size: .82rem;
+    background: #3d2c22; color: #a09080;
+  }
+  footer a { color: #c4b8aa; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .timeline::before { left: 16px; }
+    .tl-item, .tl-item:nth-child(odd) { flex-direction: column; padding-left: 44px; }
+    .tl-content { width: 100%; }
+    .tl-dot { left: 16px; }
+    section { padding: 48px 16px; }
+    .card-grid-2 { grid-template-columns: 1fr; }
+    .top-nav { padding: 0 12px; }
+  }
+
+  /* ANIMATIONS */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* Panorama diagram note */
+  .diagram-note {
+    text-align: center; margin-top: 14px; font-size: .8rem; color: #a09080; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="top-nav">
+  <div class="nav-logo">轻松看懂 AI</div>
+  <div class="nav-links">
+    <a href="#panorama">全景概览</a>
+    <a href="#basics">基础概念</a>
+    <a href="#companies">公司与产品</a>
+    <a href="#agents">Agent 智能体</a>
+    <a href="#advanced">进阶概念</a>
+    <a href="#flow">工作流程</a>
+    <a href="#cake">五层蛋糕</a>
+    <a href="#timeline">发展历程</a>
+    <a href="#quiz">小测验</a>
+    <a href="#summary">速查表</a>
+    <a href="#resources">学习资料</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="hero">
+  <h1>轻松看懂AI</h1>
+  <p class="subtitle">用最简单的方式，快速了解 AI 世界里那些听起来很酷的词——它们到底是什么，又是什么关系。</p>
+
+  <a href="#panorama" class="hero-btn">开始探险</a>
+</header>
+
+<!-- ==================== SECTION 1: PANORAMA ==================== -->
+<section id="panorama">
+  <h2 class="fade-in">第一站：全景概览</h2>
+  <p class="section-sub fade-in">先用一张图看懂 AI 世界的基本结构，点击每个节点查看详细说明。</p>
+
+  <div class="diagram-wrap fade-in">
+    <h3>一次 AI 任务的基本流程</h3>
+    <svg viewBox="0 0 340 340" class="diagram-svg" style="max-width:380px;" id="panoramaSvg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrMain" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d4726a"/></marker>
+        <marker id="arrGray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a09080"/></marker>
+      </defs>
+
+      <!-- Input -->
+      <g class="node-clickable" data-info="input">
+        <rect x="95" y="10" width="150" height="44" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="30" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="14">Input</text>
+        <text x="170" y="46" text-anchor="middle" fill="#7a6858" font-size="10">用户输入</text>
+      </g>
+
+      <line x1="170" y1="56" x2="170" y2="86" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
+
+      <!-- Agent container -->
+      <g class="node-clickable" data-info="agent_overview">
+        <rect x="20" y="90" width="300" height="140" rx="14" fill="#d4726a" opacity="0.06" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="112" text-anchor="middle" fill="#d4726a" font-weight="800" font-size="14">Agent 智能体</text>
+      </g>
+
+      <!-- LLM inside Agent -->
+      <g class="node-clickable" data-info="model_overview">
+        <rect x="38" y="124" width="130" height="46" rx="8" fill="#7a6858"/>
+        <text x="103" y="144" text-anchor="middle" fill="#fff" font-weight="700" font-size="12">LLM 大脑</text>
+        <text x="103" y="160" text-anchor="middle" fill="#d4ccc2" font-size="9">GPT / Claude / DeepSeek</text>
+      </g>
+
+      <!-- Tools inside Agent -->
+      <g class="node-clickable" data-info="tools_overview">
+        <rect x="184" y="124" width="120" height="46" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+        <text x="244" y="143" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="12">工具</text>
+        <text x="244" y="160" text-anchor="middle" fill="#7a6858" font-size="9">Skills / MCP</text>
+      </g>
+
+      <!-- LLM <-> Tools -->
+      <line x1="170" y1="147" x2="182" y2="147" stroke="#a09080" stroke-width="1.5" marker-end="url(#arrGray)"/>
+
+      <!-- Sub labels -->
+      <text x="170" y="200" text-anchor="middle" fill="#a09080" font-size="9">OpenClaw · Claude Code · Manus …</text>
+
+      <!-- Arrow Agent -> Output -->
+      <line x1="170" y1="232" x2="170" y2="262" stroke="#d4726a" stroke-width="2" marker-end="url(#arrMain)"/>
+
+      <!-- Output -->
+      <g class="node-clickable" data-info="output">
+        <rect x="95" y="266" width="150" height="44" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+        <text x="170" y="286" text-anchor="middle" fill="#d4726a" font-weight="700" font-size="14">Output</text>
+        <text x="170" y="302" text-anchor="middle" fill="#7a6858" font-size="10">执行结果</text>
+      </g>
+
+      <text x="170" y="332" text-anchor="middle" fill="#a09080" font-size="10">点击每个方框查看详细说明</text>
+    </svg>
+    <p class="diagram-note">* 这是一个高度简化的示意图，点击每个节点可以查看该环节的详细解释和更多关联概念。</p>
+  </div>
+</section>
+
+<!-- ==================== SECTION 2: BASICS ==================== -->
+<section id="basics">
+  <h2 class="fade-in">第二站：基础概念</h2>
+  <p class="section-sub fade-in">AI 世界最基本的 4 块积木，后面所有概念都建立在它们之上：LLM、Token、Context、Prompt</p>
+
+  <div class="card-grid-2">
+    <div class="card fade-in">
+      <span class="badge badge-basic">入门</span>
+      <h3>LLM — 大语言模型，也就是AI的大脑</h3>
+      <div class="en-name">Large Language Model</div>
+      <p>LLM 就像一个读过几乎全部图书馆书籍的超级学霸。它学会了人类语言的规律，能理解你说的话并生成新的文字来回答。</p>
+      <div class="analogy">生活比喻：一个百科全书式的朋友，你问什么它都能聊，但它不能上网查新消息，也不能帮你订外卖——它只会"说话"。</div>
+      <a class="deep-link" href="https://zh.wikipedia.org/wiki/%E5%A4%A7%E5%9E%8B%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B" target="_blank">深入了解 LLM →</a>
+    </div>
+    <div class="card fade-in">
+      <span class="badge badge-basic">入门</span>
+      <h3>Token — 词元</h3>
+      <div class="en-name">Token</div>
+      <p>Token 是 LLM 读写文字的最小单位。一个中文字约 1-2 个 token，一个英文单词约 1-3 个 token。LLM 不直接看"字"，而是把文字切成 token 来处理。</p>
+      <div class="analogy">生活比喻：拼乐高——一整句话被拆成一块块积木（token），AI 一块一块地读，再一块一块地拼出回答。</div>
+      <div style="margin-top:16px; padding-top:16px; border-top:1px solid #ede6dd;">
+        <div style="font-weight:700;font-size:.92rem;margin-bottom:10px;">看看 AI 是怎么"切"文字的</div>
+        <div class="token-sentence">中文：「一起来了解人工智能吧」</div>
+        <div class="tokens-row">
+          <span class="tk tk-1">一起</span>
+          <span class="tk tk-2">来</span>
+          <span class="tk tk-3">了解</span>
+          <span class="tk tk-4">人工</span>
+          <span class="tk tk-5">智能</span>
+          <span class="tk tk-1">吧</span>
+        </div>
+        <div class="token-note">每个色块 = 1 个 Token，这句话共 6 个 Token</div>
+        <div class="token-sentence" style="margin-top:12px;">英文：「What is artificial intelligence?」</div>
+        <div class="tokens-row">
+          <span class="tk tk-3">What</span>
+          <span class="tk tk-4">_is</span>
+          <span class="tk tk-5">_artificial</span>
+          <span class="tk tk-1">_intelligence</span>
+          <span class="tk tk-2">?</span>
+        </div>
+        <div class="token-note">英文 5 个 Token — 常见单词通常独占一个 Token</div>
+        <div style="margin-top:12px; padding:10px 14px; background:#faf6f1; border-radius:8px; font-size:.82rem; color:#5a4a3c; line-height:1.7;">
+          <strong>Token 为什么重要？</strong><br>
+          · 计费单位 — API 按 Token 数量收费（输入 + 输出）<br>
+          · 容量限制 — 每次能放多少内容进去，由 Context 窗口大小决定<br>
+          · 速度感知 — AI 回复速度就是每秒生成的 Token 数
+        </div>
+      </div>
+      <a class="deep-link" href="https://platform.openai.com/tokenizer" target="_blank">在线 Token 计数器 →</a>
+    </div>
+
+    <div class="card fade-in">
+      <span class="badge badge-basic">入门</span>
+      <h3>Context — 上下文窗口</h3>
+      <div class="en-name">Context Window</div>
+      <p>Context 是 LLM 一次能"看到"的全部内容，包括之前的对话历史记录、系统提示和当前用户的新提问等。</p>
+      <div class="analogy">每次问大模型问题，就相当于把你的问题、之前的聊天记录、系统提示词、网络搜集的关键内容等全都打包丢给 AI 去处理，然后 AI 根据内容返回答案。</div>
+      <div class="ctx-demo" style="margin-top:16px;">
+        <div class="ctx-demo-header">
+          <span>Context Window 里面装了什么</span>
+        </div>
+        <div class="ctx-demo-body">
+          <div class="ctx-block ctx-sys">
+            <span class="ctx-label">System Prompt（系统指令）</span>
+            「你是一个友好的 AI 助手，回答要通俗易懂…」
+            <div class="ctx-bar"><div class="ctx-fill" style="width:6%;background:#d4a017"></div></div>
+          </div>
+          <div class="ctx-block ctx-hist">
+            <span class="ctx-label">历史对话记录</span>
+            用户: 什么是人工智能？<br>
+            AI: 人工智能就是让机器学会像人一样思考…<br>
+            用户: 那 ChatGPT 属于哪种？
+            <div class="ctx-bar"><div class="ctx-fill" style="width:30%;background:#d4726a"></div></div>
+          </div>
+          <div class="ctx-block ctx-rag">
+            <span class="ctx-label">RAG 检索到的资料（如果有）</span>
+            「（来自知识库）ChatGPT 是 OpenAI 开发的对话式 AI，基于 GPT 架构…」
+            <div class="ctx-bar"><div class="ctx-fill" style="width:20%;background:#16a34a"></div></div>
+          </div>
+          <div class="ctx-block ctx-user">
+            <span class="ctx-label">当前用户输入</span>
+            「它和 Claude 有什么区别？」
+            <div class="ctx-bar"><div class="ctx-fill" style="width:3%;background:#9333ea"></div></div>
+          </div>
+        </div>
+        <div class="ctx-footer">已使用 ≈ 4,800 / 128,000 tokens（色条仅示意比例）</div>
+      </div>
+      <a class="deep-link" href="https://docs.anthropic.com/en/docs/about-claude/models" target="_blank">各模型上下文大小对比 →</a>
+    </div>
+
+    <div class="card fade-in">
+      <span class="badge badge-basic">入门</span>
+      <h3>Prompt — 提示词</h3>
+      <div class="en-name">Prompt</div>
+      <p>Prompt 就是你对 AI 说的话。写得好，AI 回答得聪明；写得模糊，AI 可能答非所问。"提示词工程"就是研究怎么把话说清楚的学问。</p>
+      <div class="analogy">生活比喻：点菜——你说"随便"，厨师可能做什么都有；你说"不辣的清淡鱼"，厨师就知道该怎么做了。</div>
+      <a class="deep-link" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank">Prompt 工程指南 →</a>
+    </div>
+  </div>
+
+  <!-- Fixed relationship diagram -->
+  <div class="diagram-wrap fade-in" style="margin-top:32px;">
+    <h3>这 4 个概念的递进关系</h3>
+    <svg viewBox="0 0 300 400" class="diagram-svg" style="max-width:340px;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d4726a"/></marker>
+      </defs>
+
+      <rect x="40" y="16" width="220" height="52" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+      <text x="150" y="38" text-anchor="middle" font-weight="700" font-size="14" fill="#d4726a">Token</text>
+      <text x="150" y="56" text-anchor="middle" font-size="11" fill="#7a6858">文字的最小单位</text>
+
+      <line x1="150" y1="70" x2="150" y2="104" stroke="#d4726a" stroke-width="2" marker-end="url(#arrBlue)"/>
+      <text x="170" y="93" fill="#7a6858" font-size="11">组成</text>
+
+      <rect x="40" y="108" width="220" height="52" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+      <text x="150" y="130" text-anchor="middle" font-weight="700" font-size="14" fill="#d4726a">Prompt</text>
+      <text x="150" y="148" text-anchor="middle" font-size="11" fill="#7a6858">你对 AI 说的话</text>
+
+      <line x1="150" y1="162" x2="150" y2="196" stroke="#d4726a" stroke-width="2" marker-end="url(#arrBlue)"/>
+      <text x="170" y="185" fill="#7a6858" font-size="11">放入</text>
+
+      <rect x="40" y="200" width="220" height="52" rx="10" fill="#faf6f1" stroke="#d4726a" stroke-width="2"/>
+      <text x="150" y="222" text-anchor="middle" font-weight="700" font-size="14" fill="#d4726a">Context</text>
+      <text x="150" y="240" text-anchor="middle" font-size="11" fill="#7a6858">上下文窗口</text>
+
+      <line x1="150" y1="254" x2="150" y2="288" stroke="#d4726a" stroke-width="2" marker-end="url(#arrBlue)"/>
+      <text x="170" y="277" fill="#7a6858" font-size="11">送给</text>
+
+      <rect x="40" y="292" width="220" height="52" rx="10" fill="#d4726a"/>
+      <text x="150" y="314" text-anchor="middle" font-weight="700" font-size="14" fill="#fff">LLM</text>
+      <text x="150" y="332" text-anchor="middle" font-size="11" fill="#f5c7b8">处理并生成回答</text>
+
+      <text x="150" y="380" text-anchor="middle" fill="#a09080" font-size="11">Prompt 由 Token 组成，放进 Context，送给 LLM 处理</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ==================== SECTION 3: COMPANIES ==================== -->
+<section id="companies">
+  <h2 class="fade-in">第三站：AI 公司与产品</h2>
+  <p class="section-sub fade-in">不同公司训练出了不同的 LLM"大脑"，各有特色。点击卡片查看详情。</p>
+
+  <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px;" class="fade-in">海外公司</h3>
+  <div class="co-grid fade-in">
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">OpenAI</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">GPT-4o / o1 / o3</div>
+      <div class="co-detail">
+        <p>最早让 AI 聊天火遍全球的公司。旗下产品 ChatGPT 两个月用户破亿。GPT 系列模型是目前应用最广泛的大语言模型，在文本、代码、推理等方面表现全面。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>ChatGPT、CodeX、API 平台</p>
+        <p><strong>国家：</strong>美国 · 2015 年成立</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">Anthropic</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">Claude Opus 4 / Sonnet 4</div>
+      <div class="co-detail">
+        <p>由 OpenAI 前员工创立，专注 AI 安全。Claude 以超长上下文（200K token）、编程能力和安全性著称。也是 MCP 协议的提出者。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>Claude.ai、Claude Code</p>
+        <p><strong>国家：</strong>美国 · 2021 年成立</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">Google DeepMind</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">Gemini 2.5 Pro / Ultra</div>
+      <div class="co-detail">
+        <p>Google 的 AI 研究部门，Gemini 系列是其最新的多模态大模型，能理解文字、图片、视频和代码。深度整合在 Google 全家桶中。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>Gemini、Google AI Studio</p>
+        <p><strong>国家：</strong>美国/英国</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">Meta</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">Llama 3 / 4 系列</div>
+      <div class="co-detail">
+        <p>Facebook 母公司，Llama 系列是目前最流行的开源大模型之一。免费开放给全世界使用和研究，推动了整个开源 AI 生态的发展。</p>
+        <p style="margin-top:6px;"><strong>国家：</strong>美国</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">xAI</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">Grok 系列</div>
+      <div class="co-detail">
+        <p>Elon Musk 创立的 AI 公司，Grok 模型集成在 X（原 Twitter）平台上，风格偏幽默直率，可实时获取 X 上的信息。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>Grok（X 平台内）</p>
+        <p><strong>国家：</strong>美国 · 2023 年成立</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 12px;" class="fade-in">中国公司</h3>
+  <div class="co-grid fade-in">
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">DeepSeek 深度求索</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">DeepSeek-R1 / V3</div>
+      <div class="co-detail">
+        <p>中国 AI 黑马！以极低训练成本做出了媲美 GPT-4 的模型，并且完全开源。DeepSeek-R1 的推理能力让全球震惊，证明了"不烧钱也能做好 AI"。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>DeepSeek Chat</p>
+        <p><strong>成立：</strong>2023 年</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">阿里巴巴</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">Qwen（通义千问）系列</div>
+      <div class="co-detail">
+        <p>阿里云推出的大模型，完全开源。Qwen 系列在中英文能力上表现出色，被大量国内企业和开发者采用，是国内开源模型的标杆之一。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>通义千问</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">字节跳动</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">豆包（Doubao）系列</div>
+      <div class="co-detail">
+        <p>抖音母公司推出的 AI 助手，擅长多轮对话和内容创作。依托字节的海量内容生态，在日常问答和创意写作上有不错的表现。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>豆包 App</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">月之暗面 Moonshot</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">Kimi 系列</div>
+      <div class="co-detail">
+        <p>以超长上下文能力闻名，Kimi 支持上传整本书或长文档进行分析和问答，很适合需要处理大量文字的场景，如论文阅读、合同审核。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>Kimi Chat</p>
+        <p><strong>成立：</strong>2023 年</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">智谱 AI</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">GLM / ChatGLM 系列</div>
+      <div class="co-detail">
+        <p>清华大学团队孵化的 AI 公司，GLM 系列模型开源且中文能力突出。智谱也是国内最早布局 AI Agent 的公司之一。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>智谱清言</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">百度</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">文心（ERNIE）系列</div>
+      <div class="co-detail">
+        <p>中国最早推出大模型对话产品的公司之一。文心一言深度整合了百度搜索和知识图谱，在中文搜索和知识问答方面有优势。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>文心一言</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">百川智能</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">Baichuan 系列</div>
+      <div class="co-detail">
+        <p>前搜狗 CEO 王小川创立，专注中文大模型。Baichuan 系列开源，在医疗、法律等垂直领域有良好表现。</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">零一万物 01.AI</span><span class="c-tag open-source">开源</span></div>
+      <div class="co-sub">Yi 系列</div>
+      <div class="co-detail">
+        <p>李开复创立的 AI 公司，Yi 系列模型开源，在多语言能力上表现出色，被海内外开发者广泛使用。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>万知</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">科大讯飞</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">讯飞星火大模型</div>
+      <div class="co-detail">
+        <p>老牌语音 AI 公司，在语音识别和教育领域积累深厚。星火大模型结合了讯飞在语音技术上的优势，在教育和办公场景有差异化竞争力。</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">阶跃星辰 StepFun</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">Step 系列</div>
+      <div class="co-detail">
+        <p>前微软亚洲研究院副院长姜大昕创立，专注多模态大模型，在图像理解和视频生成方面有独特优势。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>跃问</p>
+      </div>
+    </div>
+    <div class="co-card" onclick="toggleCo(this)">
+      <div class="co-head"><span class="co-name">MiniMax</span><span class="c-tag">闭源</span></div>
+      <div class="co-sub">MiniMax 系列</div>
+      <div class="co-detail">
+        <p>专注语音合成和角色扮演对话，海螺 AI 在 AI 语音和虚拟角色互动方面体验领先。</p>
+        <p style="margin-top:6px;"><strong>产品：</strong>海螺 AI</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 4: AGENT ==================== -->
+<section id="agents">
+  <h2 class="fade-in">第四站：Agent 与 Multi-Agent</h2>
+  <p class="section-sub fade-in">LLM 只能"说话"，Agent（智能体）能"做事"——从嘴巴升级为双手。</p>
+
+  <div class="card-grid-2">
+    <div class="card fade-in">
+      <span class="badge badge-mid">了解</span>
+      <h3>Agent — 智能体</h3>
+      <div class="en-name">AI Agent</div>
+      <p>Agent = LLM + 工具 + 规划能力。它不仅能思考，还能自己决定下一步做什么：搜索网页、写代码、读文件、调用 API……</p>
+      <div class="analogy">生活比喻：LLM 像一个坐在椅子上的学者，只能回答问题。Agent 像一个能走来走去的助手，不仅能回答你，还会主动帮你查资料、写邮件、订机票。</div>
+      <a class="deep-link" href="https://docs.anthropic.com/en/docs/build-with-claude/agentic" target="_blank">Anthropic Agent 文档 →</a>
+    </div>
+    <div class="card fade-in">
+      <span class="badge badge-mid">了解</span>
+      <h3>Multi-Agent — 多智能体</h3>
+      <div class="en-name">Multi-Agent System</div>
+      <p>多个 Agent 组成团队协作，各有分工。比如一个 Agent 负责搜索、一个负责写代码、一个负责测试，像一个小公司一样运转。</p>
+      <div class="analogy">生活比喻：一个人做完整个项目很累。但有人负责搜资料、有人负责写文档、有人负责检查——各司其职，合在一起就是 Multi-Agent 团队。</div>
+      <a class="deep-link" href="https://docs.anthropic.com/en/docs/build-with-claude/agentic#multi-agent-orchestration" target="_blank">Multi-Agent 编排指南 →</a>
+    </div>
+  </div>
+
+  <!-- OpenClaw 介绍 -->
+  <div class="card fade-in" style="margin-top:24px;">
+    <span class="badge badge-basic">热门</span>
+    <h3>OpenClaw — 开源 AI Agent 新星</h3>
+    <div class="en-name">Open-Source Personal AI Agent</div>
+    <p>OpenClaw 是 2026 年初爆火的开源 AI Agent 框架，由 PSPDFKit 创始人 Peter Steinberger 打造，GitHub 星标超 24 万。它是一个<strong>本地运行、全天在线</strong>的私人 AI 助手，通过 Telegram、WhatsApp、Discord 等聊天软件和你对话，背后可以接 Claude、GPT、DeepSeek 等各种大模型。</p>
+    <p style="margin-top:10px;">核心亮点：</p>
+    <ul style="margin:8px 0 0 18px;font-size:.9rem;color:#5a4a3c;line-height:2;">
+      <li><strong>本地优先</strong> — 数据存在你自己的设备上，隐私有保障</li>
+      <li><strong>100+ AgentSkills</strong> — 执行命令、管文件、自动化浏览网页等</li>
+      <li><strong>多模型支持</strong> — 自由选择底层 LLM，本地部署可零成本运行</li>
+      <li><strong>主动触达</strong> — 不用你开口，它可以主动通知你（如日程提醒）</li>
+    </ul>
+    <div class="analogy">生活比喻：如果 ChatGPT 是一个在线客服，那 OpenClaw 就是住在你家里的 AI 管家——24 小时待命，什么事都能帮你跑腿。</div>
+  </div>
+
+  <!-- Agent 产品对比 -->
+  <div class="fade-in" style="margin-top:24px;">
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:6px;">主流 AI Agent 产品对比</h3>
+    <p style="font-size:.85rem;color:#7a6858;margin-bottom:16px;">不同产品各有侧重，选适合自己的最重要。</p>
+    <div class="card-grid-2">
+      <div class="card" style="border-left:4px solid #d4726a;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="sum-kw" style="background:#d4726a;margin:0;">OpenClaw</span>
+          <span style="font-size:.75rem;color:#16a34a;font-weight:700;">开源</span>
+        </div>
+        <p style="font-size:.88rem;">全能私人助手，通过聊天软件交互</p>
+        <div style="margin-top:10px;font-size:.8rem;color:#7a6858;">
+          <div>运行方式：<strong style="color:#3d2c22;">本地部署</strong></div>
+          <div>适合：<strong style="color:#3d2c22;">技术爱好者、注重隐私的用户</strong></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid #7a6858;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="sum-kw" style="background:#7a6858;margin:0;">Manus</span>
+          <span style="font-size:.75rem;color:#dc2626;font-weight:700;">闭源</span>
+        </div>
+        <p style="font-size:.88rem;">通用型 Agent，交付完整任务成果</p>
+        <div style="margin-top:10px;font-size:.8rem;color:#7a6858;">
+          <div>运行方式：<strong style="color:#3d2c22;">云端沙箱</strong></div>
+          <div>适合：<strong style="color:#3d2c22;">非技术用户、商务人士</strong></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid #b85c52;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="sum-kw" style="background:#b85c52;margin:0;">Claude Code</span>
+          <span style="font-size:.75rem;color:#dc2626;font-weight:700;">闭源</span>
+        </div>
+        <p style="font-size:.88rem;">命令行编程 Agent，写代码 & 调试</p>
+        <div style="margin-top:10px;font-size:.8rem;color:#7a6858;">
+          <div>运行方式：<strong style="color:#3d2c22;">本地 CLI</strong></div>
+          <div>适合：<strong style="color:#3d2c22;">软件工程师、开发者</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:#faf6f1;border-radius:8px;font-size:.85rem;color:#5a4a3c;border-left:3px solid #d4726a;">
+      <strong>一句话总结：</strong>想要开源可控选 OpenClaw，想要"交活"不操心选 Manus，写代码选 Claude Code，日常聊天选 ChatGPT、豆包等。
+    </div>
+  </div>
+
+  <!-- Agent flow diagram -->
+  <div class="diagram-wrap fade-in" style="margin-top:28px;">
+    <h3>Agent 的工作循环</h3>
+    <svg viewBox="0 0 340 490" class="diagram-svg" style="max-width:380px;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrA" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d4726a"/></marker>
+        <marker id="arrLoop" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a09080"/></marker>
+      </defs>
+
+      <!-- User -->
+      <rect x="80" y="16" width="140" height="46" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+      <text x="150" y="36" text-anchor="middle" font-weight="700" font-size="13" fill="#d4726a">用户</text>
+      <text x="150" y="52" text-anchor="middle" font-size="10" fill="#7a6858">给一个任务</text>
+
+      <line x1="150" y1="64" x2="150" y2="100" stroke="#d4726a" stroke-width="2" marker-end="url(#arrA)"/>
+
+      <!-- 1. Think -->
+      <rect x="50" y="104" width="200" height="56" rx="10" fill="#d4726a"/>
+      <text x="150" y="128" text-anchor="middle" fill="#fff" font-weight="700" font-size="14">1. 想一想</text>
+      <text x="150" y="148" text-anchor="middle" fill="#f5c7b8" font-size="10">调用大模型思考</text>
+
+      <line x1="150" y1="162" x2="150" y2="198" stroke="#d4726a" stroke-width="2" marker-end="url(#arrA)"/>
+
+      <!-- 2. Act -->
+      <rect x="50" y="202" width="200" height="56" rx="10" fill="#d4726a"/>
+      <text x="150" y="226" text-anchor="middle" fill="#fff" font-weight="700" font-size="14">2. 动手干</text>
+      <text x="150" y="246" text-anchor="middle" fill="#f5c7b8" font-size="10">调用工具执行</text>
+
+      <!-- Tools on left side -->
+      <rect x="4" y="200" width="38" height="20" rx="4" fill="#7a6858"/>
+      <text x="23" y="214" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">搜索</text>
+      <rect x="4" y="224" width="38" height="20" rx="4" fill="#7a6858"/>
+      <text x="23" y="238" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">写代码</text>
+      <rect x="4" y="248" width="38" height="20" rx="4" fill="#7a6858"/>
+      <text x="23" y="262" text-anchor="middle" fill="#fff" font-size="8" font-weight="600">读文件</text>
+      <line x1="44" y1="234" x2="48" y2="234" stroke="#7a6858" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="23" y="280" text-anchor="middle" fill="#7a6858" font-size="8">工具箱</text>
+
+      <line x1="150" y1="260" x2="150" y2="296" stroke="#d4726a" stroke-width="2" marker-end="url(#arrA)"/>
+
+      <!-- 3. Check -->
+      <rect x="50" y="300" width="200" height="56" rx="10" fill="#d4726a"/>
+      <text x="150" y="324" text-anchor="middle" fill="#fff" font-weight="700" font-size="14">3. 看结果</text>
+      <text x="150" y="344" text-anchor="middle" fill="#f5c7b8" font-size="10">做对了吗？</text>
+
+      <!-- Loop arrow on right: Check -> Think -->
+      <path d="M 252 328 L 280 328 Q 296 328 296 312 L 296 140 Q 296 124 280 124 L 252 124"
+            stroke="#a09080" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrLoop)"/>
+      <text x="310" y="218" fill="#a09080" font-size="9" font-weight="500">没做完</text>
+      <text x="310" y="232" fill="#a09080" font-size="9" font-weight="500">再来</text>
+
+      <!-- Exit: Check -> Done -->
+      <line x1="150" y1="358" x2="150" y2="400" stroke="#d4726a" stroke-width="2" marker-end="url(#arrA)"/>
+      <text x="168" y="384" fill="#7a6858" font-size="10">做完了</text>
+
+      <!-- Done -->
+      <rect x="80" y="404" width="140" height="38" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+      <text x="150" y="428" text-anchor="middle" font-weight="700" font-size="12" fill="#d4726a">完成任务</text>
+
+      <text x="170" y="472" text-anchor="middle" fill="#a09080" font-size="10">Agent 不断重复"想→干→看"循环，直到任务完成</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ==================== SECTION 5: ADVANCED ==================== -->
+<section id="advanced">
+  <h2 class="fade-in">第五站：进阶概念</h2>
+  <p class="section-sub fade-in">让 AI 更加强大的几个关键"装备"。</p>
+
+  <div class="card fade-in">
+    <h3>Skill — 技能</h3>
+    <div class="en-name">Skill / Tool</div>
+    <p>Skill 是 Agent 能使用的具体能力，比如"搜索网页""生成图片""执行代码"。每一个 Skill 是一个小工具，Agent 根据任务选择合适的 Skill。</p>
+    <div class="analogy">生活比喻：Agent 是万能工匠，Skill 是工具箱里的各种工具——锤子、螺丝刀、电钻。看到钉子拿锤子，看到螺丝拿螺丝刀。</div>
+  </div>
+
+  <div class="card fade-in">
+    <h3>MCP — 模型上下文协议</h3>
+    <div class="en-name">Model Context Protocol</div>
+    <p>MCP 是 Anthropic 提出的开放标准，让 AI 模型能用统一方式连接各种外部工具和数据源。可以理解为 AI 世界的"USB 接口"。</p>
+    <div class="analogy">生活比喻：以前每种手机都有自己的充电线，现在统一用 Type-C。MCP 就是 AI 工具连接的 Type-C——不管什么工具，只要支持 MCP，AI 就能直接用。</div>
+    <a class="deep-link" href="https://modelcontextprotocol.io/" target="_blank">MCP 官方文档 →</a>
+  </div>
+
+  <div class="card fade-in">
+    <h3>RAG — 检索增强生成</h3>
+    <div class="en-name">Retrieval-Augmented Generation</div>
+    <p>LLM 的知识可能过时或不完整。RAG 的做法是：先从知识库检索相关资料，把资料塞进 Prompt，再让 LLM 生成回答。</p>
+    <div class="analogy">生活比喻：开卷考试！学生（LLM）做题时可以翻书（检索知识库）。闭卷只靠记忆容易出错；开卷有参考资料，答案更准确。</div>
+    <p style="margin-top:12px;padding:12px;background:#faf6f1;border-radius:8px;font-size:.88rem;">
+      <strong>RAG 流程：</strong>用户提问 → 系统检索知识库 → 把相关文档片段 + 问题放入 Prompt → LLM 根据资料生成答案
+    </p>
+    <a class="deep-link" href="https://docs.anthropic.com/en/docs/build-with-claude/retrieval-augmented-generation" target="_blank">RAG 实践指南 →</a>
+  </div>
+</section>
+
+<!-- ==================== SECTION 6: FLOW ==================== -->
+<section id="flow">
+  <h2 class="fade-in">第六站：一次对话的完整流程</h2>
+  <p class="section-sub fade-in">当你向 AI 提问，背后发生了什么？</p>
+
+  <div class="diagram-wrap fade-in" style="overflow-x:auto;">
+    <h3>从提问到回答的完整链路</h3>
+    <svg viewBox="0 0 360 600" class="diagram-svg" style="max-width:420px;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrF" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#d4726a"/></marker>
+        <marker id="arrG2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#16a34a"/></marker>
+      </defs>
+
+      <!-- 用户提问 -->
+      <rect x="40" y="16" width="180" height="52" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+      <text x="130" y="38" text-anchor="middle" font-weight="700" font-size="13" fill="#d4726a">用户提问</text>
+      <text x="130" y="56" text-anchor="middle" font-size="10" fill="#7a6858">"今天天气如何？"</text>
+      <line x1="130" y1="70" x2="130" y2="100" stroke="#d4726a" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+      <!-- 分词 -->
+      <rect x="40" y="104" width="180" height="48" rx="8" fill="#faf6f1" stroke="#d4ccc2" stroke-width="1"/>
+      <text x="130" y="126" text-anchor="middle" font-weight="700" font-size="12" fill="#d4726a">分词 Tokenize</text>
+      <text x="130" y="142" text-anchor="middle" font-size="10" fill="#7a6858">文字 → Token 序列</text>
+      <line x1="130" y1="154" x2="130" y2="184" stroke="#d4726a" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+      <!-- 组装 Context -->
+      <rect x="30" y="188" width="200" height="72" rx="8" fill="#faf6f1" stroke="#d4ccc2" stroke-width="1"/>
+      <text x="130" y="210" text-anchor="middle" font-weight="700" font-size="12" fill="#d4726a">组装 Context</text>
+      <text x="130" y="228" text-anchor="middle" font-size="10" fill="#7a6858">系统提示 + 历史对话</text>
+      <text x="130" y="244" text-anchor="middle" font-size="10" fill="#7a6858">+ 本次提问 + RAG 结果</text>
+
+      <!-- RAG branch (right side) -->
+      <rect x="252" y="196" width="96" height="38" rx="7" fill="#7a6858"/>
+      <text x="300" y="220" text-anchor="middle" fill="#fff" font-weight="600" font-size="10">RAG 检索</text>
+      <line x1="252" y1="215" x2="232" y2="215" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrG2)"/>
+      <text x="242" y="206" fill="#16a34a" font-size="9">注入</text>
+
+      <!-- 知识库 -->
+      <rect x="260" y="250" width="80" height="30" rx="6" fill="#f0ebe4" stroke="#d4ccc2" stroke-width="1"/>
+      <text x="300" y="270" text-anchor="middle" font-weight="600" font-size="9" fill="#7a6858">知识库</text>
+      <line x1="300" y1="250" x2="300" y2="236" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrG2)"/>
+
+      <line x1="130" y1="262" x2="130" y2="304" stroke="#d4726a" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+      <!-- LLM 推理 -->
+      <rect x="40" y="308" width="180" height="52" rx="8" fill="#d4726a"/>
+      <text x="130" y="332" text-anchor="middle" fill="#fff" font-weight="700" font-size="13">LLM 推理</text>
+      <text x="130" y="350" text-anchor="middle" fill="#f5c7b8" font-size="10">逐个生成 Token</text>
+
+      <!-- Agent branch (right of LLM) -->
+      <rect x="248" y="310" width="100" height="44" rx="7" fill="#5a4a3c"/>
+      <text x="298" y="332" text-anchor="middle" fill="#fff" font-weight="600" font-size="10">Agent 决策</text>
+      <text x="298" y="348" text-anchor="middle" fill="#d4ccc2" font-size="9">需要工具？</text>
+      <line x1="222" y1="334" x2="246" y2="334" stroke="#7a6858" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrF)"/>
+
+      <!-- Skill / MCP -->
+      <rect x="256" y="370" width="84" height="28" rx="5" fill="#7a6858"/>
+      <text x="298" y="389" text-anchor="middle" fill="#fff" font-weight="600" font-size="9">Skill 工具</text>
+      <line x1="298" y1="356" x2="298" y2="368" stroke="#7a6858" stroke-width="1" marker-end="url(#arrF)"/>
+      <rect x="256" y="404" width="84" height="24" rx="5" fill="#7a6858" opacity="0.7"/>
+      <text x="298" y="420" text-anchor="middle" fill="#fff" font-weight="600" font-size="9">via MCP</text>
+
+      <line x1="130" y1="362" x2="130" y2="456" stroke="#d4726a" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+      <!-- 输出回答 -->
+      <rect x="40" y="460" width="180" height="52" rx="8" fill="#faf6f1" stroke="#d4726a" stroke-width="1.5"/>
+      <text x="130" y="482" text-anchor="middle" font-weight="700" font-size="13" fill="#d4726a">输出回答</text>
+      <text x="130" y="500" text-anchor="middle" font-size="10" fill="#7a6858">Token → 文字</text>
+
+      <!-- Return to user -->
+      <line x1="130" y1="514" x2="130" y2="548" stroke="#d4726a" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <rect x="60" y="552" width="140" height="32" rx="6" fill="#faf6f1" stroke="#d4726a" stroke-width="1"/>
+      <text x="130" y="573" text-anchor="middle" font-weight="600" font-size="11" fill="#d4726a">返回给用户</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ==================== SECTION 7: 5-LAYER CAKE ==================== -->
+<section id="cake">
+  <h2 class="fade-in">第七站：黄仁勋的"五层蛋糕"理论</h2>
+  <p class="section-sub fade-in">
+    NVIDIA 创始人黄仁勋提出：AI 产业就像一块五层蛋糕——<br>
+    <strong>Energy → Chips → Infrastructure → Models → Applications</strong><br>
+    从底层能源到顶层应用，缺一不可。点击每一层展开详情。
+  </p>
+
+  <div style="max-width:760px;margin:0 auto;" class="fade-in">
+
+    <!-- Tier 5: Applications -->
+    <div class="cake-tier" style="background:linear-gradient(135deg,#d4726a,#e8956e);max-width:100%;" data-tier="5">
+      <div class="tier-header" onclick="cakeTierClick(this)">
+        <div class="tier-label"><div class="tier-num">5</div><h4>Applications 应用层（Agent, MCP, Skill, RAG）</h4></div>
+        <span class="tier-toggle">&#9662;</span>
+      </div>
+      <div class="tier-body"><div class="tier-body-inner">
+        <p>蛋糕顶层——用户直接接触到的 AI 产品和服务。</p>
+        <div class="tier-analogy">生活比喻：蛋糕的奶油装饰——你在蛋糕店最先看到的就是这层。</div>
+        <div class="tier-concepts">
+          <span class="concept-chip">ChatGPT</span>
+          <span class="concept-chip">Claude.ai</span>
+          <span class="concept-chip">DeepSeek Chat</span>
+          <span class="concept-chip">Agent 智能体</span>
+          <span class="concept-chip">Multi-Agent</span>
+          <span class="concept-chip">Skill / MCP / RAG</span>
+          <span class="concept-chip">AI 编程助手</span>
+          <span class="concept-chip">自动驾驶</span>
+        </div>
+        <div class="tier-examples">
+          <div class="tier-example-card"><strong>Agent 产品</strong>Claude Code、CodeX 等 Agent 调用底层 LLM，结合工具直接帮用户完成复杂任务。</div>
+          <div class="tier-example-card"><strong>Prompt / Context / Token</strong>用户写 Prompt（由 Token 组成），放入 Context，送给 LLM——这些概念在应用层被直接体验。</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="cake-connector">|</div>
+
+    <!-- Tier 4: Models -->
+    <div class="cake-tier" style="background:linear-gradient(135deg,#c06858,#cc7868);max-width:92%;" data-tier="4">
+      <div class="tier-header" onclick="cakeTierClick(this)">
+        <div class="tier-label"><div class="tier-num">4</div><h4>Models 模型层（LLM, GPT, Claude, DeepSeek）</h4></div>
+        <span class="tier-toggle">&#9662;</span>
+      </div>
+      <div class="tier-body"><div class="tier-body-inner">
+        <p>大语言模型（LLM）本身——AI 的"大脑"。包括训练、微调、对齐、推理优化。</p>
+        <div class="tier-analogy">生活比喻：蛋糕的胚体——不同的配方和烘焙手法决定品质。GPT-4、Claude、DeepSeek 就像不同品牌的蛋糕胚。</div>
+        <div class="tier-concepts">
+          <span class="concept-chip">LLM 大语言模型</span>
+          <span class="concept-chip">OpenAI / GPT</span>
+          <span class="concept-chip">Claude</span>
+          <span class="concept-chip">DeepSeek</span>
+          <span class="concept-chip">Transformer 架构</span>
+          <span class="concept-chip">RLHF 对齐</span>
+          <span class="concept-chip">微调 Fine-tuning</span>
+        </div>
+        <div class="tier-examples">
+          <div class="tier-example-card"><strong>三大阵营</strong>OpenAI（GPT）、Anthropic（Claude）、DeepSeek——各有特色，DeepSeek 用更低成本训练出了顶级模型。</div>
+          <div class="tier-example-card"><strong>开源 vs 闭源</strong>DeepSeek、Qwen 选择开源让全世界用；OpenAI、Anthropic 选择闭源保护商业利益。</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="cake-connector">|</div>
+
+    <!-- Tier 3: Infrastructure -->
+    <div class="cake-tier" style="background:linear-gradient(135deg,#b88078,#c09088);max-width:84%;" data-tier="3">
+      <div class="tier-header" onclick="cakeTierClick(this)">
+        <div class="tier-label"><div class="tier-num">3</div><h4>Infrastructure 基础设施层（GPU 集群, 数据中心）</h4></div>
+        <span class="tier-toggle">&#9662;</span>
+      </div>
+      <div class="tier-body"><div class="tier-body-inner">
+        <p>把成千上万块 GPU 组装成超级计算系统——数据中心、高速网络、存储系统。</p>
+        <div class="tier-analogy">生活比喻：蛋糕的"烤箱和模具"——有了好面粉还需要专业大烤箱才能烤出大蛋糕。</div>
+        <div class="tier-concepts">
+          <span class="concept-chip">DGX 超级计算机</span>
+          <span class="concept-chip">NVLink / InfiniBand</span>
+          <span class="concept-chip">GPU 集群</span>
+          <span class="concept-chip">AWS / Azure / GCP</span>
+          <span class="concept-chip">数据中心</span>
+        </div>
+        <div class="tier-examples">
+          <div class="tier-example-card"><strong>规模惊人</strong>训练 GPT-4 级别模型需要数千到数万块 GPU 同时工作数月。</div>
+          <div class="tier-example-card"><strong>DeepSeek 的启示</strong>在基础设施受限条件下通过算法创新弥补硬件差距——智慧可以弥补资源不足。</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="cake-connector">|</div>
+
+    <!-- Tier 2: Chips -->
+    <div class="cake-tier" style="background:linear-gradient(135deg,#c09088,#b09888);max-width:76%;" data-tier="2">
+      <div class="tier-header" onclick="cakeTierClick(this)">
+        <div class="tier-label"><div class="tier-num">2</div><h4>Chips 芯片层（NVIDIA GPU, CUDA, 华为昇腾）</h4></div>
+        <span class="tier-toggle">&#9662;</span>
+      </div>
+      <div class="tier-body"><div class="tier-body-inner">
+        <p>GPU 芯片是 AI 计算的核心硬件——黄仁勋的 NVIDIA 靠这一层起家。</p>
+        <div class="tier-analogy">生活比喻：蛋糕的"面粉"——没有好面粉做不出好蛋糕。NVIDIA 就是 AI 世界最大的"面粉厂"。</div>
+        <div class="tier-concepts">
+          <span class="concept-chip">NVIDIA GPU (H100/B200)</span>
+          <span class="concept-chip">CUDA 平台</span>
+          <span class="concept-chip">Tensor Core</span>
+          <span class="concept-chip">AMD MI300</span>
+          <span class="concept-chip">华为昇腾</span>
+          <span class="concept-chip">台积电代工</span>
+        </div>
+        <div class="tier-examples">
+          <div class="tier-example-card"><strong>芯片有多贵</strong>一块 H100 售价约 3-4 万美元。训练大模型需数千块，光芯片就要数亿美元。</div>
+          <div class="tier-example-card"><strong>地缘政治</strong>AI 芯片出口管制直接影响中国 AI 发展路径，DeepSeek 在受限条件下逼出了创新。</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="cake-connector">|</div>
+
+    <!-- Tier 1: Energy -->
+    <div class="cake-tier" style="background:linear-gradient(135deg,#b09888,#b8a898);max-width:68%;" data-tier="1">
+      <div class="tier-header" onclick="cakeTierClick(this)">
+        <div class="tier-label"><div class="tier-num">1</div><h4>Energy 能源层（电力, 核能, 新能源）</h4></div>
+        <span class="tier-toggle">&#9662;</span>
+      </div>
+      <div class="tier-body"><div class="tier-body-inner">
+        <p>一切的根基是能源。AI 数据中心消耗的电力惊人，没有充足稳定的能源，上面所有层都无从谈起。</p>
+        <div class="tier-analogy">生活比喻：蛋糕的"火焰"——不管蛋糕多精美，没有火就没法烤。训练一个大模型的耗电量相当于一个小城镇好几个月的用电。</div>
+        <div class="tier-concepts">
+          <span class="concept-chip">电力供应</span>
+          <span class="concept-chip">核能 (SMR)</span>
+          <span class="concept-chip">太阳能 / 风能</span>
+          <span class="concept-chip">储能技术</span>
+          <span class="concept-chip">碳排放</span>
+        </div>
+        <div class="tier-examples">
+          <div class="tier-example-card"><strong>AI 有多耗电</strong>训练一次 GPT-4 级别模型消耗电量约 50 GWh——相当于 5000 个家庭一年用电。</div>
+          <div class="tier-example-card"><strong>巨头押注核能</strong>微软重启核电站、Google 投资小型核反应堆——"没有电就没有 AI"。</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ==================== SECTION 8: TIMELINE ==================== -->
+<section id="timeline">
+  <h2 class="fade-in">第八站：AI 发展时间线</h2>
+  <p class="section-sub fade-in">这些概念和公司是怎么一步步出现的。</p>
+
+  <div class="timeline fade-in">
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2017</div>
+        <h4>Transformer 诞生</h4>
+        <p>Google 发表《Attention Is All You Need》，提出 Transformer 架构，成为所有现代 LLM 的基石。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2018-2020</div>
+        <h4>GPT 系列起步</h4>
+        <p>OpenAI 发布 GPT-1 → GPT-2 → GPT-3，模型越来越大，能力越来越强。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2020</div>
+        <h4>RAG 概念提出</h4>
+        <p>Meta 研究院发表 RAG 论文，提出"先检索后生成"的思路。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2021</div>
+        <h4>Anthropic 成立</h4>
+        <p>OpenAI 前研究副总裁等人创立 Anthropic，专注 AI 安全研究。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2022.11</div>
+        <h4>ChatGPT 横空出世</h4>
+        <p>两个月用户破亿，AI 从实验室走进千家万户。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2023.3</div>
+        <h4>GPT-4 与 Claude 发布</h4>
+        <p>大模型竞争进入白热化阶段。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2023</div>
+        <h4>Agent 概念爆发</h4>
+        <p>AutoGPT、BabyAGI 等项目掀起热潮，探索让 AI 自主完成复杂任务。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2024.1</div>
+        <h4>DeepSeek 崛起</h4>
+        <p>以极低训练成本达到顶级水平，震动全球 AI 行业。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2024.11</div>
+        <h4>MCP 协议发布</h4>
+        <p>Anthropic 发布 Model Context Protocol，为 AI 工具连接建立统一标准。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">2025</div>
+        <h4>Multi-Agent 时代</h4>
+        <p>多智能体协作日益成熟，Claude CodeX 等 Agent 产品改变开发者工作方式。</p>
+      </div><div class="tl-dot"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 9: QUIZ ==================== -->
+<section id="quiz">
+  <h2 class="fade-in">第九站：趣味小测验</h2>
+  <p class="section-sub fade-in">测试一下你学到了多少，点击你认为正确的选项。</p>
+
+  <div class="quiz-area fade-in">
+    <div class="quiz-q">
+      <h4>1. LLM 是什么的缩写？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">Long Learning Machine</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">Large Language Model</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">Low Latency Memory</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+    <div class="quiz-q">
+      <h4>2. Token 最好的比喻是？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">一本完整的书</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">一块乐高积木（文字的最小处理单位）</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">一台电脑</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+    <div class="quiz-q">
+      <h4>3. Agent 和普通 LLM 的最大区别是？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">Agent 更便宜</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">Agent 能使用工具、自主完成任务</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">Agent 只会说英文</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+    <div class="quiz-q">
+      <h4>4. RAG 的核心思想是？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">先从知识库检索资料，再让 AI 生成回答</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">让 AI 自己上网搜索</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">把 AI 训练得更聪明</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+    <div class="quiz-q">
+      <h4>5. MCP 可以比喻成？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">一种编程语言</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">USB Type-C 接口（AI 工具连接的统一标准）</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">一个 AI 模型</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+    <div class="quiz-q">
+      <h4>6. 黄仁勋五层蛋糕理论中，最底层是什么？</h4>
+      <div class="quiz-opts">
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">芯片 Chips</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, false)">模型 Models</div>
+        <div class="quiz-opt" onclick="checkQuiz(this, true)">能源 Energy</div>
+      </div>
+      <div class="quiz-result"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SUMMARY TABLE ==================== -->
+<section id="summary" style="padding-bottom:32px;">
+  <h2 class="fade-in">概念速查表</h2>
+  <p class="section-sub fade-in">一张表回顾所有核心概念。</p>
+  <div class="fade-in" style="overflow-x:auto;">
+    <table class="sum-table">
+      <tr><th>概念</th><th>一句话解释</th><th>生活类比</th></tr>
+      <tr><td><span class="sum-kw">Token</span></td><td>文字被切碎后的最小处理单位，也是 AI 的计费货币</td><td>乐高积木块</td></tr>
+      <tr><td><span class="sum-kw">Prompt</span></td><td>你对 AI 说的话（指令），说得越清楚结果越好</td><td>餐厅点菜单</td></tr>
+      <tr><td><span class="sum-kw">Context</span></td><td>AI 一次能"看到"的全部内容，有大小上限</td><td>书桌大小</td></tr>
+      <tr><td><span class="sum-kw">LLM</span></td><td>大语言模型，AI 的大脑，能理解和生成文字</td><td>超级学霸</td></tr>
+      <tr><td><span class="sum-kw">Agent</span></td><td>能自主使用工具、循环执行任务的 AI 系统</td><td>能独立干活的员工</td></tr>
+      <tr><td><span class="sum-kw">Skill</span></td><td>Agent 会用的各种技能，像插件一样可扩展</td><td>员工的技能证书</td></tr>
+      <tr><td><span class="sum-kw">MCP</span></td><td>AI 接入外部工具的统一标准协议</td><td>USB Type-C 接口</td></tr>
+      <tr><td><span class="sum-kw">RAG</span></td><td>先从知识库检索资料，再让 AI 生成回答</td><td>开卷考试</td></tr>
+      <tr><td><span class="sum-kw">Multi-Agent</span></td><td>多个 Agent 组队协作，各司其职完成大任务</td><td>项目小组</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== SECTION 10: RESOURCES ==================== -->
+<section id="resources">
+  <h2 class="fade-in">第十站：深入学习资料</h2>
+  <p class="section-sub fade-in">按难度分类的优质资源，适合不同阶段的学习者。</p>
+
+  <div class="accordion fade-in">
+    <div class="acc-item open">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>入门级 — 零基础也能看懂</span>
+        <span class="arrow">&#9662;</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <div class="res-grid">
+            <div class="res-card">
+              <h4>李宏毅 — 机器学习课程</h4>
+              <p>台大教授，全中文讲解，从零开始讲 AI 和深度学习，B站播放量千万级。</p>
+              <a href="https://www.bilibili.com/video/BV1Wv411h7kN" target="_blank">B站观看 →</a>
+            </div>
+            <div class="res-card">
+              <h4>吴恩达 — AI For Everyone</h4>
+              <p>斯坦福教授面向非技术人员的 AI 入门课，有中文字幕。</p>
+              <a href="https://www.bilibili.com/video/BV1yJ411R7bP" target="_blank">B站中文版 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Prompt 工程入门</h4>
+              <p>学会和 AI 聊天的"正确姿势"，写好提示词让 AI 更懂你。</p>
+              <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank">Anthropic 官方教程 →</a>
+            </div>
+            <div class="res-card">
+              <h4>通往AGI之路</h4>
+              <p>中文 AI 知识库，系统梳理 AI 基础概念、术语和发展脉络。</p>
+              <a href="https://waytoagi.feishu.cn/wiki" target="_blank">飞书文档 →</a>
+            </div>
+            <div class="res-card">
+              <h4>动手学深度学习（D2L）</h4>
+              <p>李沐等人编写，交互式中文教材，边学边跑代码。</p>
+              <a href="https://zh.d2l.ai/" target="_blank">在线阅读 →</a>
+            </div>
+            <div class="res-card">
+              <h4>3Blue1Brown — 神经网络</h4>
+              <p>用精美动画讲解神经网络原理，直观易懂，B站有中文字幕。</p>
+              <a href="https://www.bilibili.com/video/BV1bx411M7Zx" target="_blank">B站观看 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>中级 — 有基础的学习者</span>
+        <span class="arrow">&#9662;</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <div class="res-grid">
+            <div class="res-card">
+              <h4>Transformer 论文解读</h4>
+              <p>理解改变世界的 "Attention Is All You Need"，可视化图解版。</p>
+              <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank">The Illustrated Transformer →</a>
+            </div>
+            <div class="res-card">
+              <h4>李沐 — 论文精读系列</h4>
+              <p>逐篇精读 Transformer、GPT、BERT 等经典论文，中文讲解。</p>
+              <a href="https://www.bilibili.com/video/BV1AF411b7xQ" target="_blank">B站观看 →</a>
+            </div>
+            <div class="res-card">
+              <h4>MCP 协议入门</h4>
+              <p>了解 Model Context Protocol 的设计理念和使用方法。</p>
+              <a href="https://modelcontextprotocol.io/" target="_blank">MCP 官方文档 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Agent 构建教程</h4>
+              <p>学习如何用 Claude 构建 AI Agent。</p>
+              <a href="https://docs.anthropic.com/en/docs/build-with-claude/agentic" target="_blank">Anthropic Agent 文档 →</a>
+            </div>
+            <div class="res-card">
+              <h4>LangChain 中文教程</h4>
+              <p>主流 AI 应用开发框架，学习 RAG、Agent 链路搭建。</p>
+              <a href="https://python.langchain.com/docs/get_started/introduction" target="_blank">官方文档 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Datawhale AI 学习路线</h4>
+              <p>国内最大开源学习社区，提供系统化 AI 学习路线和组队学习。</p>
+              <a href="https://github.com/datawhalechina" target="_blank">GitHub 主页 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>高级 — 开发者和研究者</span>
+        <span class="arrow">&#9662;</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <div class="res-grid">
+            <div class="res-card">
+              <h4>多模态大模型</h4>
+              <p>图文理解、视觉问答、图像生成——了解 GPT-4o、Gemini 等多模态能力。</p>
+              <a href="https://www.bilibili.com/video/BV1BH4y1M7Ft" target="_blank">B站多模态解读 →</a>
+            </div>
+            <div class="res-card">
+              <h4>LLM 基础 — 训练与推理</h4>
+              <p>深入理解大模型的预训练、微调（SFT）、RLHF 对齐等核心流程。</p>
+              <a href="https://github.com/datawhalechina/llm-cookbook" target="_blank">Datawhale LLM Cookbook →</a>
+            </div>
+            <div class="res-card">
+              <h4>DeepSeek 技术报告</h4>
+              <p>DeepSeek-V3/R1 技术报告，了解如何低成本训练顶级模型。</p>
+              <a href="https://github.com/deepseek-ai/DeepSeek-V3/blob/main/DeepSeek_V3.pdf" target="_blank">GitHub 论文 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Anthropic API 文档</h4>
+              <p>使用 Claude API 开发 AI 应用，含 Tool Use 和 Agent SDK。</p>
+              <a href="https://docs.anthropic.com/en/api/getting-started" target="_blank">API 文档 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Hugging Face 模型库</h4>
+              <p>全球最大开源模型平台，下载部署 DeepSeek、Qwen 等模型。</p>
+              <a href="https://huggingface.co/" target="_blank">HuggingFace →</a>
+            </div>
+            <div class="res-card">
+              <h4>魔搭社区（ModelScope）</h4>
+              <p>阿里达摩院运营，国内可直接访问的模型托管平台，大量中文模型。</p>
+              <a href="https://modelscope.cn/" target="_blank">ModelScope →</a>
+            </div>
+            <div class="res-card">
+              <h4>OpenAI Cookbook</h4>
+              <p>实用代码示例和最佳实践集锦。</p>
+              <a href="https://cookbook.openai.com/" target="_blank">OpenAI Cookbook →</a>
+            </div>
+            <div class="res-card">
+              <h4>arXiv / 论文速递</h4>
+              <p>AI 前沿论文每日更新。国内可用"沈向洋带你读论文"等B站频道跟进。</p>
+              <a href="https://arxiv.org/list/cs.AI/recent" target="_blank">arXiv AI 最新 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Stanford CS229 / CS231n</h4>
+              <p>斯坦福经典 ML / CV 课程，B站有完整中文字幕版。</p>
+              <a href="https://www.bilibili.com/video/BV1JE411w7Ub" target="_blank">B站 CS229 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>好用的 AI 工具集合与导航</span>
+        <span class="arrow">&#9662;</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <div class="res-grid">
+            <div class="res-card">
+              <h4>AI 工具集（ai-bot.cn）</h4>
+              <p>国内最全的 AI 工具导航站，分类清晰，收录数千款工具。</p>
+              <a href="https://ai-bot.cn/" target="_blank">访问网站 →</a>
+            </div>
+            <div class="res-card">
+              <h4>AIbase（aibase.com）</h4>
+              <p>AI 产品聚合平台，覆盖写作、绘画、编程、视频等各类 AI 应用。</p>
+              <a href="https://www.aibase.com/" target="_blank">访问网站 →</a>
+            </div>
+            <div class="res-card">
+              <h4>ToolAI</h4>
+              <p>全球 AI 工具发现平台，按用途分类，支持搜索和对比。</p>
+              <a href="https://www.toolai.io/zh/" target="_blank">访问网站 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Futurepedia</h4>
+              <p>每日更新的 AI 工具目录，按类别浏览最新 AI 产品。</p>
+              <a href="https://www.futurepedia.io/" target="_blank">访问网站 →</a>
+            </div>
+            <div class="res-card">
+              <h4>通义千问（Qwen）</h4>
+              <p>阿里出品的免费 AI 助手，支持文字、图片、文档理解，国内直接用。</p>
+              <a href="https://tongyi.aliyun.com/" target="_blank">立即使用 →</a>
+            </div>
+            <div class="res-card">
+              <h4>Kimi（月之暗面）</h4>
+              <p>支持超长文本（20万字），可上传文件和网页链接，国内免费使用。</p>
+              <a href="https://kimi.moonshot.cn/" target="_blank">立即使用 →</a>
+            </div>
+            <div class="res-card">
+              <h4>DeepSeek Chat</h4>
+              <p>DeepSeek 官方对话工具，免费使用 R1/V3 模型，推理能力强。</p>
+              <a href="https://chat.deepseek.com/" target="_blank">立即使用 →</a>
+            </div>
+            <div class="res-card">
+              <h4>即梦 AI（字节跳动）</h4>
+              <p>AI 图像和视频生成工具，输入文字即可创作，国内免费。</p>
+              <a href="https://jimeng.jianying.com/" target="_blank">立即使用 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>轻松看懂 AI — 零基础图解指南</p>
+  <p style="margin-top:6px;">内容仅供学习参考</p>
+</footer>
+
+<!-- POPUP -->
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="info-popup" id="infoPopup">
+  <button class="popup-close" onclick="closePopup()">&times;</button>
+  <div id="popupContent"></div>
+</div>
+
+<script>
+// ===== Scroll animations =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ===== Progress bar + Nav active (throttled) =====
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+const progressBar = document.getElementById('progressBar');
+let scrollTick = false;
+window.addEventListener('scroll', () => {
+  if (scrollTick) return;
+  scrollTick = true;
+  requestAnimationFrame(() => {
+    const h = document.documentElement;
+    progressBar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + '%';
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+    scrollTick = false;
+  });
+}, { passive: true });
+
+
+// ===== Accordion =====
+function toggleAcc(header) {
+  const item = header.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ===== Quiz =====
+function checkQuiz(opt, correct) {
+  const parent = opt.closest('.quiz-q');
+  // 清除之前的选择状态，允许重新作答
+  parent.querySelectorAll('.quiz-opt').forEach(o => {
+    o.classList.remove('correct', 'wrong');
+  });
+  const result = parent.querySelector('.quiz-result');
+  if (correct) {
+    opt.classList.add('correct');
+    result.textContent = '回答正确！';
+    result.style.color = '#16a34a';
+  } else {
+    opt.classList.add('wrong');
+    result.textContent = '不对哦，再想想吧～';
+    result.style.color = '#dc2626';
+  }
+}
+
+// ===== Popup =====
+function closePopup() {
+  document.getElementById('infoPopup').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+}
+function showPopup(html) {
+  document.getElementById('popupContent').innerHTML = html;
+  document.getElementById('infoPopup').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+// ===== Panorama node clicks =====
+const panoramaInfo = {
+  input: {
+    title: 'Input — 你对 AI 说的话',
+    tagline: '一切从你开口说话开始',
+    html:
+      '<p>你用大白话告诉 AI 你想干什么，比如"帮我写个网页"、"今天天气怎么样"。你说的这段话就叫 <span class="pop-chip">Prompt</span> 提示词。</p>' +
+      '<div class="pop-block"><div class="pop-block-title">AI 处理你的话的流程</div>' +
+      '<ul>' +
+      '<li>你的话 <span class="pop-chip">Prompt</span> 被切成小碎片 <span class="pop-chip">Token</span></li>' +
+      '<li>碎片和聊天记录打包成 <span class="pop-chip">Context</span> 上下文</li>' +
+      '<li>整个包裹交给 AI 大脑处理</li>' +
+      '</ul></div>' +
+      '<a class="pop-link" href="#basics" onclick="closePopup()">去第二站详细了解 →</a>'
+  },
+  agent_overview: {
+    title: 'Agent — 能帮你干活的 AI 助手',
+    tagline: '不只是聊天，还能真正做事',
+    html:
+      '<p>普通 AI 只能<strong>回答问题</strong>，而 Agent 能<strong>自主完成任务</strong>——搜索、写代码、操作文件，全都行。</p>' +
+      '<div class="pop-block"><div class="pop-block-title">Agent 的工具箱</div>' +
+      '<ul>' +
+      '<li><span class="pop-chip">Skill</span> Agent 会用的各种工具，如搜索、写代码</li>' +
+      '<li><span class="pop-chip">MCP</span> 工具的统一接口，像 Type-C 充电口</li>' +
+      '<li><span class="pop-chip">RAG</span> 先查资料再回答，相当于"开卷考试"</li>' +
+      '<li><span class="pop-chip">Multi-Agent</span> 多个 Agent 组队，各司其职</li>' +
+      '</ul></div>' +
+      '<div class="pop-block"><div class="pop-block-title">常见 Agent 产品</div>' +
+      '<ul><li>OpenClaw — 开源私人助手</li><li>Claude Code — 编程 Agent</li><li>Manus — 通用任务 Agent</li></ul></div>' +
+      '<a class="pop-link" href="#agents" onclick="closePopup()">去第四站详细了解 →</a>'
+  },
+  model_overview: {
+    title: 'LLM 模型 — AI 的大脑',
+    tagline: '读过海量知识的超级学霸',
+    html:
+      '<p>LLM（大语言模型）就是 AI 的<strong>"脑子"</strong>。它读过海量的书、文章、代码，学会了人类语言的规律。</p>' +
+      '<p>但它<strong>只会"想"，不会"做"</strong>——需要 Agent 帮它连接工具才能干活。</p>' +
+      '<div class="pop-block"><div class="pop-block-title">各家大模型一览</div>' +
+      '<ul>' +
+      '<li><strong>OpenAI</strong> → GPT-4o / o1 / o3</li>' +
+      '<li><strong>Anthropic</strong> → Claude Opus 4 / Sonnet 4</li>' +
+      '<li><strong>DeepSeek</strong> → R1 / V3（开源免费）</li>' +
+      '<li><strong>阿里</strong> → 通义千问 Qwen（开源）</li>' +
+      '<li><strong>字节 / 月之暗面</strong> → 豆包 / Kimi</li>' +
+      '</ul></div>' +
+      '<a class="pop-link" href="#companies" onclick="closePopup()">去第三站详细了解 →</a>'
+  },
+  tools_overview: {
+    title: '工具 — Agent 的双手',
+    tagline: 'Skills 提供能力，MCP 统一接口',
+    html:
+      '<p>Agent 光有 LLM 大脑还不够，还需要<strong>工具</strong>来真正执行任务——搜索网页、写代码、读写文件、调用 API 等等。</p>' +
+      '<div class="pop-block"><div class="pop-block-title">Skill 技能</div>' +
+      '<p style="margin:0;font-size:.85rem;">每一种具体能力就是一个 Skill，比如"网页搜索""代码执行""图片生成"。Agent 根据任务自动挑选合适的 Skill 来用。</p></div>' +
+      '<div class="pop-block"><div class="pop-block-title">MCP 协议</div>' +
+      '<p style="margin:0;font-size:.85rem;">MCP 是工具的<strong>统一接口标准</strong>，就像 USB-C 充电口——不管谁做的工具，只要遵守 MCP 协议，Agent 就能直接调用，即插即用。</p></div>' +
+      '<a class="pop-link" href="#advanced" onclick="closePopup()">去第五站详细了解 →</a>'
+  },
+  output: {
+    title: 'Output — AI 做出的结果',
+    tagline: '从"只能说"到"真能干"',
+    html:
+      '<p>普通 AI 只能回一段文字，Agent 则能产出<strong>实际成果</strong>。</p>' +
+      '<div class="pop-block"><div class="pop-block-title">Agent 能做什么</div>' +
+      '<ul>' +
+      '<li>写代码并直接运行</li>' +
+      '<li>创建、修改、删除文件</li>' +
+      '<li>上网搜索并汇总成报告</li>' +
+      '<li>连接其他软件自动操作</li>' +
+      '<li>画图、做数据分析</li>' +
+      '<li>多个 AI 助手协作完成大项目</li>' +
+      '</ul></div>' +
+      '<div class="pop-block" style="border-left-color:#16a34a;"><div class="pop-block-title" style="color:#16a34a;">一句话总结</div>' +
+      '<p style="margin:0;font-size:.88rem;">普通 AI 只能"说"，Agent 能"干"——这就是从聊天机器人到 AI 助手的质变。</p></div>'
+  }
+};
+
+document.querySelectorAll('#panoramaSvg .node-clickable').forEach(node => {
+  node.addEventListener('click', () => {
+    const key = node.dataset.info;
+    if (!panoramaInfo[key]) return;
+    const d = panoramaInfo[key];
+    showPopup(
+      '<div class="pop-header"><h3>' + d.title + '</h3>' +
+      (d.tagline ? '<div class="pop-tagline">' + d.tagline + '</div>' : '') +
+      '</div><div class="pop-body">' + d.html + '</div>'
+    );
+  });
+});
+
+// ===== Cake tier toggle =====
+function cakeTierClick(headerEl) {
+  headerEl.closest('.cake-tier').classList.toggle('open');
+}
+
+// ===== Company card toggle =====
+function toggleCo(el) {
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
